@@ -1,34 +1,41 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import kotlin.math.asin
 
 class TaylorSeriesTest {
 
-    companion object {
-        const val eps = 0.00000001
+    @ParameterizedTest
+    @CsvSource(
+        "-0.5, 0.00000001",
+        "0.5, 0.00000001",
+        "0.2, 0.00000001",
+        "0.0, 0.00000001"
+    )
+    fun testComputation_ValuesWithinBounds(x: Double, eps: Double) {
+        assertEquals(asin(x), taylorseries.asin(x, eps), eps)
     }
 
-    @Test
-    fun testComputation_ValuesWithinBounds() {
-        assertEquals(asin(-0.5), taylorseries.asin(-0.5, eps), eps)
-        assertEquals(asin(0.5), taylorseries.asin(0.5, eps), eps)
-        assertEquals(asin(0.2), taylorseries.asin(0.2, eps), eps)
-        assertEquals(asin(0.0), taylorseries.asin(0.0, eps), eps)
+    @ParameterizedTest
+    @CsvSource(
+        "1.1, 0.00000001",
+        "-2.0, 0.00000001"
+    )
+    fun testComputation_ValuesOutOfBounds(x: Double, eps: Double) {
+        assertEquals(asin(x), taylorseries.asin(x, eps))
     }
 
-    @Test
-    fun testComputation_ValuesOutOfBounds() {
-        assertEquals(asin(1.1), taylorseries.asin(1.1, eps))
-        assertEquals(asin(-2.0), taylorseries.asin(-2.0, eps))
-    }
-
-    @Test
-    fun testComputation_ValuesOnBounds() {
+    @ParameterizedTest
+    @CsvSource(
+        "1.0, 0.00000001, 0.07",
+        "-1.0, 0.00000001, 0.07"
+    )
+    fun testComputation_ValuesOnBounds(x: Double, eps: Double, delta: Double) {
         /*
         * impossible to calculate any closer than delta=0.07 on this values
         * */
-        assertEquals(asin(1.0), taylorseries.asin(1.0, eps), 0.07)
-        assertEquals(asin(-1.0), taylorseries.asin(-1.0, eps), 0.07)
+        assertEquals(asin(x), taylorseries.asin(x, eps), delta)
 
     }
 }
